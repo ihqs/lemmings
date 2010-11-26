@@ -1,3 +1,11 @@
+// bootstraping
+this.onmessage = function(event)
+{
+	importScripts(event.data);
+	this.onmessage = this.processIncomingMessages;
+}
+
+// processing incoming messages
 this.processIncomingMessages = function(event)
 {
 	var method_delimiter = event.data.indexOf(':');
@@ -13,12 +21,7 @@ this.onDataMessage = function(data)
 	this.process(data);
 }
 
-this.onmessage = function(event)
-{
-	importScripts(event.data);
-	this.onmessage = this.processIncomingMessages;
-}
-
+// processing outgoing messages
 this.postJSONMessage = function(object)
 {
 	// TODO : upgrade this function
