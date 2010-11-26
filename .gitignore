@@ -1,0 +1,16 @@
+# PHPEdit
+*.PHPEditProject
+
+# netbeans
+nbproject/
+
+# eclipse
+.buildpath
+.project
+.settings/
+
+# ctags
+tags
+
+# mac
+.DS_Store
