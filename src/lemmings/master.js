@@ -34,7 +34,7 @@ lemmings.master.prototype.run = function()
 	// sanity checker
 	if(this.lemming_data.length > 16) 
 	{
-		this.log('Impossible to launch lemmings : you can only launch a maximum of 16 lemmings');
+		this.doLog('Impossible to launch lemmings : you can only launch a maximum of 16 lemmings');
 		return;
 	}
 	

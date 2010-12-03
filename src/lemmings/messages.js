@@ -25,8 +25,6 @@ lemmings.messages.prototype.doPostMessage = function(message, worker)
 
 lemmings.messages.prototype.onmessage = function(event)
 {
-if(typeof(console) != "undefined") { console.log(event.data); }
-	
 	var data = event.data;
 	if(data.message)
 	{

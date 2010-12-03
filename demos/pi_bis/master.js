@@ -16,7 +16,7 @@ master.onResultMessage = function(data)
 }
 
 var total = 0;
-var nb_workers = 4;
+var nb_workers = 16;
 var items_per_worker = 10000;
 
 var data = [];
