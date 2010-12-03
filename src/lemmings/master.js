@@ -1,7 +1,9 @@
 lemmings.master = function()
 {
+	this.is_master  = true;
 	this.date_start = null;
 	this.date_end 	= null;
+	this.workers	= new Array();
 }
 
 lemmings.master.launchedLemmingsCounter = null;
@@ -13,6 +15,8 @@ lemmings.master.prototype.init = function(lemming_name, lemming_data)
 	
 	if(lemming_name) { this.lemming_name = lemming_name; }
 	if(lemming_data) { this.lemming_data = lemming_data; }
+	
+	lemmings.lib.extend(this, lemmings.messages);
 }
 
 lemmings.master.prototype.setLemmingName = function(lemming_name)
@@ -20,40 +24,39 @@ lemmings.master.prototype.setLemmingName = function(lemming_name)
 	this.lemming_name	= lemming_name;
 }
 
-lemmings.master.prototype.setLemmingName = function(lemming_data)
+lemmings.master.prototype.setLemmingData = function(lemming_data)
 {
 	this.lemming_data	= lemming_data;
 }
 
-lemmings.master.prototype.run = function(lemming_name, data)
+lemmings.master.prototype.run = function()
 {
-	this.init(lemming_name, data);
-	
 	// sanity checker
-	if(data.length > 16) 
+	if(this.lemming_data.length > 16) 
 	{
 		this.log('Impossible to launch lemmings : you can only launch a maximum of 16 lemmings');
 		return;
 	}
 	
+	var alea = Math.random();
+	
 	// iterate on data to launch the right number of lemmings from the cliff
-	for(var key in data) 
+	for(var key in this.lemming_data) 
 	{
 		var item_data = data[key];
 		try 
 		{
-			// TODO : clean path : add them in options / configuration ?
-			var worker = new lemmings.worker('src/lemmings/worker.js');
-			worker.postMessage('http://lemmings.localhost/' + lemming_name + '?alea=' + Math.random());
-			worker.postMessage('Data:' + item_data);
+			var worker = new lemmings.worker(lemmings.path + '/worker.js');
+			this.postAction(this.ACTION_IMPORT, { url: lemmings.url + '/' + this.lemming_name + '?alea=' + alea }, worker);
+			this.postAction(this.ACTION_PROCESS, item_data, worker);
 			
-			var closure = lemmings.lib.closure(this, this.doStoreResult);
+			var closure = lemmings.lib.closure(this, this.onmessage);
 			worker.onmessage = closure;
 		}
 		
 		catch(e)
 		{
-			this.log(e.message);
+			this.doLog('[' + e.filename + ':' + e.lineno + '] ' + e.message);
 		}
 		
 		finally
@@ -66,28 +69,38 @@ lemmings.master.prototype.run = function(lemming_name, data)
 			}
 			
 			this.launchedLemmingsCounter++;
-			this.log("worker no." + key + " launched");
+			this.workers.push(worker);
+			this.doLog("worker no." + key + " launched");
 		}
 	}
 }
 
-lemmings.master.prototype.doStoreResult = function(event)
+lemmings.master.prototype.terminate = function()
 {
-	var data = event.data;
-	this.log('Message received : ' + data);
+	for(var key in this.workers)
+	{
+		this.workers[key].terminate();
+	}
+}
+
+lemmings.master.prototype.onLogMessage = function(data)
+{
+	this.doLog(data.message);
+}
+
+lemmings.master.prototype.doLog = function(message)
+{
+	// masters
+	var log_container = document.getElementById('log');
+	if(lemmings.log && log_container != null) 
+	{
+		log_container.textContent += message + "\n";
+	}
 	
-	if(data.substr(0, 5) == "json:")
+	if(typeof(console) != "undefined"
+	&& typeof(console.log) == "function")
 	{
-		data = lemmings.lib.parseJSON(data.substr(5));
-	}
-	else if(data.substr(0, 4) == "xml:")
-	{
-		data = lemmings.lib.parseXML(data.substr(4));
-	}
-		
-	if(typeof(this.storeResult) == "function")
-	{
-		this.storeResult(data);
+		console.log(message);
 	}
 }
 
@@ -108,12 +121,4 @@ lemmings.master.prototype.outputResult = function(message, lemming_id)
 	if(output_container == null) { return ; }	
 	
 	output_container.textContent = message; 
-}
-
-lemmings.master.prototype.log = function(message)
-{
-	var log_container = document.getElementById('log');
-	if(log_container == null) { return ; }
-	
-	log_container.textContent += message + "\n";
 }

@@ -1,42 +1,27 @@
-// bootstraping
-this.onmessage = function(event)
+lemmings = {}	
+
+importScripts('lib.js');
+importScripts('messages.js');
+lemmings.lib.extend(this, lemmings.messages);
+
+this.is_worker = true;
+
+this.onerror = function(e)
 {
-	importScripts(event.data);
-	this.onmessage = this.processIncomingMessages;
+	this.postMessage({ action: "Log", message: '[' + e.filename + ':' + e.lineno + '] ' + e.message });
 }
 
-// processing incoming messages
-this.processIncomingMessages = function(event)
+this.onImportMessage = function(data)
 {
-	var method_delimiter = event.data.indexOf(':');
-	var method = event.data.substr(0, method_delimiter);
-	var data = event.data.substr(method_delimiter + 1);
-	
-	this['on' + method + 'Message'](data);
+	importScripts(data.url);
+}
+
+this.onExtendMessage = function(data)
+{
+	lemmings.lib.extend(this, data.classToAdd);
 }
 
 this.onDataMessage = function(data)
 {
-	this.data = data;
-	this.process(data);
+	this.process();
 }
-
-// processing outgoing messages
-this.postJSONMessage = function(object)
-{
-	// TODO : upgrade this function
-	var string = '{';
-	for(var key in object)
-	{
-		string += '"' + key + '": "' + object[key] + '",';
-	}
-	
-	string = string.substr(0, string.length - 1) + '}';
-	this.postMessage('json:' + string);
-}
-
-this.postXMLMessage = function(message)
-{
-	this.postMessage('xml:' + message);
-}
-

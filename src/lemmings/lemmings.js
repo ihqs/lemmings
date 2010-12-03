@@ -1,4 +1,9 @@
-lemmings = {};
+lemmings = {
+	url: null,
+	path: '/src/lemmings',
+	log: false
+}
+
 lemmings.importScripts = function()
 {
 	for(var i = 0; i < arguments.length; i++)
@@ -7,12 +12,12 @@ lemmings.importScripts = function()
 	    with(tag)
 	    {
 	    	type = "text/javascript";
-	    	src	 = 'src/lemmings/' + arguments[i] + '.js';
+	    	src	 = this.path + '/' + arguments[i] + '.js';
 	    }
 	    
 	    document.body.appendChild(tag);
 	}
 }
 
-lemmings.importScripts('lib', 'master', 'worker');
+lemmings.importScripts('lib', 'messages', 'master');
 lemmings.worker = Worker;
