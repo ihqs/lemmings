@@ -32,10 +32,6 @@ lemmings.master.prototype.createWorker = function()
 	{
 		var worker = new lemmings.worker(lemmings.path + '/worker.js');
 		
-		if(this.workersBehaviour)
-		{
-			this.postAction(this.ACTION_ADD_BEHAVIOUR, { })
-		}
 		
 		var closure = lemmings.lib.closure(this, this.onmessage);
 		worker.onmessage = closure;

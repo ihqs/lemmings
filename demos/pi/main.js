@@ -41,9 +41,7 @@ pi.master.prototype.onResultMessage = function(data)
 	var now = new Date();
 	document.getElementById('elapsed').textContent = now.getTime() - this.date_start.getTime();
 
-	
-	this.log('worker closed');
-	this.terminate();
+	this.doLog('worker closed');
 }
 
 pi.master.prototype.outputResult = function(message)
