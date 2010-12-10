@@ -47,7 +47,7 @@ lemmings.master.prototype.run = function()
 		try 
 		{
 			var worker = new lemmings.worker(lemmings.path + '/worker.js');
-			this.postAction(this.ACTION_IMPORT, { url: lemmings.url + '/' + this.lemming_name + '?alea=' + alea }, worker);
+			this.postAction(this.ACTION_IMPORT, { url: lemmings.protocol + lemmings.url + '/' + this.lemming_name + '?alea=' + alea }, worker);
 			this.postAction(this.ACTION_PROCESS, item_data, worker);
 			
 			var closure = lemmings.lib.closure(this, this.onmessage);

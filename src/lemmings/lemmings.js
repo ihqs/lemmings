@@ -1,7 +1,8 @@
 lemmings = {
-	url: null,
+	protocol: (typeof(document.protocol) !== "undefined") ? document.protocol : 'http://',
+	url: document.domain,
 	path: '/src/lemmings',
-	log: false
+	log: false,
 }
 
 lemmings.importScripts = function()

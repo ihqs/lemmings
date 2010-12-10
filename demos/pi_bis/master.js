@@ -1,5 +1,3 @@
-lemmings.url = 'http://lemmings.localhost';
-
 var master = new lemmings.master();
 master.onResultMessage = function(data) 
 { 
@@ -16,8 +14,8 @@ master.onResultMessage = function(data)
 }
 
 var total = 0;
-var nb_workers = 16;
-var items_per_worker = 10000;
+var nb_workers = 4;
+var items_per_worker = 100000;
 
 var data = [];
 for(var i = 0; i < nb_workers; i++) { data[i] = { start_value: i * items_per_worker }; }

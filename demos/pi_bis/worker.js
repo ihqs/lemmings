@@ -1,7 +1,7 @@
 this.onProcessMessage = function(data) 
 {
 	var n 	= 1 * data.start_value;
-	var end	= n + 10000;
+	var end	= n + 10000000;
 	
 	total = 0;
 	while (true) 
