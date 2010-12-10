@@ -19,7 +19,7 @@ lemmings.master.prototype.setWorkerUri = function(uri)
 	this.workersUri = uri;
 }
 
-lemmings.master.prototype.createWorker = function()
+lemmings.master.prototype.createWorker = function(options)
 {
 	// sanity checker
 	if(lemmings.launchedLemmings >= 16) 
@@ -31,6 +31,8 @@ lemmings.master.prototype.createWorker = function()
 	try 
 	{
 		var worker = new lemmings.worker(lemmings.protocol + lemmings.url + '/' + lemmings.path + '/worker.js');
+		if(options.uri) 		{ this.postAction(this.ACTION_IMPORT, { url: url }, worker) }
+		if(options.behaviour)	{ this.postAction(this.ACTION_ADD_BEHAVIOUR, { behaviour: behaviour }, worker) }
 		
 		var closure = lemmings.lib.closure(this, this.onmessage);
 		worker.onmessage = closure;
@@ -51,25 +53,11 @@ lemmings.master.prototype.createWorker = function()
 	}
 }
 
-lemmings.master.prototype.createWorkers = function(nb_workers)
+lemmings.master.prototype.createWorkers = function(nb_workers, uri)
 {
 	for(var i = 0; i < nb_workers; i++)
 	{
-		this.createWorker();
-	}
-}
-
-lemmings.master.prototype.launch = function(data)
-{
-	if(data == null) { data = {} }
-	if(typeof(data) !== "object")
-	{
-		throw lemmings.exception.wrongParameter("data", "object", data);
-	}
-	
-	for(var key in this.workers)
-	{
-		this.postAction(this.ACTION_PROCESS, {}, this.workers[key]);
+		this.createWorker(uri);
 	}
 }
 

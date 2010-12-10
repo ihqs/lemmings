@@ -12,18 +12,19 @@ pi.config = {
  ********************************************************/
 pi.master = function() 
 {  
+	var url = lemmings.protocol + lemmings.url + '/demos/pi/worker.js?alea=' + Math.random();
+	
+	var data = new Array();
 	for(var i = 0; i < pi.config.nb_workers; i++) 
 	{ 
-		var data = { 
+		data[i] = { 
 			start_value: i * pi.config.items_per_workers, 
 			end_value: (i * pi.config.items_per_workers) + pi.config.items_per_workers
 		}; 
-		var worker = this.createWorker();
-		this.postAction(this.ACTION_IMPORT, { url: lemmings.protocol + lemmings.url + '/' + 'demos/pi/worker.js?alea=' + Math.random() }, worker)
-		this.postData('data', data, worker);
 	}
 	
-	this.launch();	
+	this.createWorkers(data.length, url);
+	this.postActionToAll(this.ACTION_PROCESS, data);	
 }
 
 pi.master.prototype = new lemmings.master();
@@ -33,9 +34,9 @@ pi.master.prototype.total = 0;
 
 pi.master.prototype.onResultMessage = function(data) 
 { 
-	this.outputResult(data.dp);
+	this.outputResult(data.total);
 	
-	this.total += parseFloat(data.dp);
+	this.total += parseFloat(data.total);
 	document.getElementById('global_result').textContent = Math.sqrt(6 * this.total);
 
 	var now = new Date();
@@ -55,21 +56,18 @@ pi.master.prototype.outputResult = function(message)
  * Pi lemmings workers
  ********************************************************/
 pi.worker = function() { ; }
-pi.worker.prototype.onProcessMessage = function() 
+pi.worker.prototype.onProcessMessage = function(data) 
 {
-	var n 	= 1 * this.data.start_value;
-	var end	= 2 * this.data.end_value;
+	var n 	= 1 * data.start_value;
+	var end	= 2 * data.end_value;
 	
 	total = 0;
-	while (true) 
+	for(var i = n; i < end; i++) 
 	{
-	  n += 1;
-	  if(n >= end) { break; }
-	  
 	  total += 1 / Math.pow(n, 2);
 	}
 	
-	this.postAction('Result', {dp: total});
+	this.postAction('Result', {total: total});
 	this.close();
 }
 

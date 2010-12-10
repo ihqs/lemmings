@@ -1,8 +1,8 @@
 
-this.onProcessMessage = function() 
+this.onProcessMessage = function(data) 
 {
-	var n 	= 1 * this.data.start_value;
-	var end	= 2 * this.data.end_value;
+	var n 	= 1 * data.start_value;
+	var end	= 2 * data.end_value;
 	
 	total = 0;
 	while (true) 
@@ -13,6 +13,6 @@ this.onProcessMessage = function()
 	  total += 1 / Math.pow(n, 2);
 	}
 	
-	this.postAction('Result', {dp: total});
+	this.postAction('Result', {total: total});
 	this.close();
 }

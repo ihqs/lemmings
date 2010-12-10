@@ -16,6 +16,8 @@ lemmings.messages.prototype.log = function(message)
 
 lemmings.messages.prototype.postAction = function(action, object, worker)
 {
+	if(typeof(object) !== "object") { object = {} }
+	
 	object.action = action;
 	this.doPostMessage(object, worker);
 }
@@ -29,14 +31,39 @@ lemmings.messages.prototype.postData = function(variable, message, worker)
 	this.doPostMessage(object, worker);
 }
 
-lemmings.messages.prototype.postActions = function(action, data)
+lemmings.messages.prototype.postDataToAll = function(variable, data, worker)
 {
 	if(!this.workers || !this.workers.length || this.workers.length == 0)
 	{
 		return ;
 	}
 	
-	if (!data 
+	if (!data
+	|| (typeof(data) != "array" && typeof(data) != "object"))
+	{
+		var single_data = data;
+		data = new Array();
+		
+		for(var i = 0; i < this.workers.length; i++)
+		{
+			data[i] = single_data;
+		}
+	}
+	
+	for(var key in this.workers)
+	{
+		this.postData(variable, data, this.workers[key]);
+	}
+}
+
+lemmings.messages.prototype.postActionToAll = function(action, data)
+{
+	if(!this.workers || !this.workers.length || this.workers.length == 0)
+	{
+		return ;
+	}
+	
+	if (!data
 	|| (typeof(data) != "array" && typeof(data) != "object"))
 	{
 		var single_data = data;

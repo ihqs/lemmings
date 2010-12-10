@@ -19,10 +19,12 @@ this.onImportMessage = function(data)
 
 this.onAddBehaviourMessage = function(data)
 {
-	lemmings.lib.addBehaviour(this, data.classToAdd);
+	if(data.url) 		{ importScripts(data.url); }
+	if(data.behaviour) 	{ lemmings.lib.addBehaviour(this, data.behaviour); }
 }
 
 this.onRemoveBehaviourMessage = function(data)
 {
-	lemmings.lib.removeBehaviour(this, data.classToRemove);
+	if(data.url) 		{ importScripts(data.url); }
+	if(data.behaviour) 	{ lemmings.lib.removeBehaviour(this, data.behaviour); }
 }
