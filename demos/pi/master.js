@@ -1,26 +1,23 @@
-lemmings.url = 'http://lemmings.localhost';
-
 var master = new lemmings.master();
-master.doOnMessage = function(data)
-{
-	nb_workers_closed++;
-	this.outputResult(4 * parseInt(data.value) / item_per_worker);
+master.onResultMessage = function(data) 
+{ 
+	this.outputResult(data.dp);
 	
-	total_data += parseInt(data.value);
-	document.getElementById('global_result').textContent = (4 * total_data) / (nb_workers_closed * item_per_worker);
-	
+	total += parseFloat(data.dp);
+	document.getElementById('global_result').textContent = Math.sqrt(6 * total);
+
 	var now = new Date();
 	document.getElementById('elapsed').textContent = now.getTime() - master.date_start.getTime();
-	result++;
+	
+	this.log('worker closed');
+	this.terminate();
 }
 
-var total_data = 0;
-var result = 0;
-var items_per_worker = 1000000;
-var nb_workers = 8;
-var nb_workers_closed = 0;
+var total = 0;
+var nb_workers = 4;
+var items_per_worker = 100000;
 
 var data = [];
-for(var i = 0; i < nb_workers; i++) { data[i] = items_per_worker; }
-master.init('demos/pi/worker.js', data);
+for(var i = 0; i < nb_workers; i++) { data[i] = { start_value: i * items_per_worker }; }
+master.init('demos/pi_bis/worker.js', data);
 master.run();

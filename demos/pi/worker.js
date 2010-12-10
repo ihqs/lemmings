@@ -1,15 +1,17 @@
-
-this.process = function() 
+this.onProcessMessage = function(data) 
 {
-	var p = 0;
+	var n 	= 1 * data.start_value;
+	var end	= n + 10000000;
 	
-	for(var i = 1 ; i <= parseInt(this.data) ; i++)
+	total = 0;
+	while (true) 
 	{
-		var x = Math.random();
-		var y = Math.random();
-	    if((Math.pow(x, 2) + Math.pow(y, 2)) < 1) { p++; }
-	}
+	  n += 1;
+	  if(n >= end) { break; }
 	  
-	this.postJSONMessage({value: p});
+	  total += 1 / Math.pow(n, 2);
+	}
+	
+	this.postAction('Result', {dp: total});
 	this.close();
 }
