@@ -1,8 +1,9 @@
 lemmings = {}	
 
+importScripts('exceptions.js');
 importScripts('lib.js');
 importScripts('messages.js');
-lemmings.lib.extend(this, lemmings.messages);
+lemmings.lib.addBehaviour(this, lemmings.messages);
 
 this.is_worker = true;
 
@@ -16,12 +17,12 @@ this.onImportMessage = function(data)
 	importScripts(data.url);
 }
 
-this.onExtendMessage = function(data)
+this.onAddBehaviourMessage = function(data)
 {
-	lemmings.lib.extend(this, data.classToAdd);
+	lemmings.lib.addBehaviour(this, data.classToAdd);
 }
 
-this.onDataMessage = function(data)
+this.onRemoveBehaviourMessage = function(data)
 {
-	this.process();
+	lemmings.lib.removeBehaviour(this, data.classToRemove);
 }

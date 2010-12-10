@@ -3,6 +3,7 @@ lemmings = {
 	url: document.domain,
 	path: '/src/lemmings',
 	log: false,
+	launchedLemmings: 0
 }
 
 lemmings.importScripts = function()
@@ -20,5 +21,5 @@ lemmings.importScripts = function()
 	}
 }
 
-lemmings.importScripts('lib', 'messages', 'master');
+lemmings.importScripts('exceptions', 'lib', 'messages', 'master');
 lemmings.worker = Worker;

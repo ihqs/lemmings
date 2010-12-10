@@ -1,7 +1,8 @@
-this.onProcessMessage = function(data) 
+
+this.onProcessMessage = function() 
 {
-	var n 	= 1 * data.start_value;
-	var end	= n + 10000000;
+	var n 	= 1 * this.data.start_value;
+	var end	= 2 * this.data.end_value;
 	
 	total = 0;
 	while (true) 

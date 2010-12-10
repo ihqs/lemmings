@@ -18,6 +18,12 @@ var nb_workers = 4;
 var items_per_worker = 100000;
 
 var data = [];
-for(var i = 0; i < nb_workers; i++) { data[i] = { start_value: i * items_per_worker }; }
-master.init('demos/pi_bis/worker.js', data);
-master.run();
+for(var i = 0; i < nb_workers; i++) 
+{ 
+	data[i] = { 
+		start_value: i * items_per_worker, 
+		end_value: (i * items_per_worker) + items_per_worker 
+	}; 
+}
+master.init('demos/pi/worker.js', data);
+master.launch();

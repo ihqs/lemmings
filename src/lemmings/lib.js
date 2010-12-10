@@ -32,60 +32,36 @@ lemmings.lib.enumToArray = function(iterable)
 	}	
 }
 
-lemmings.lib.parseXML = function(string)
+lemmings.lib.addBehaviour = function(object, behaviourToAdd)
 {
-	// TODO : transform XML to json
-	if (window.DOMParser)
-	{
-		var parser = new DOMParser();
-		xml = parser.parseFromString(string,"text/xml");
-	}
-
-	else
-	{
-		xml = new ActiveXObject("Microsoft.XMLDOM");
-		xml.async = "false";
-		xml.loadXML(string); 
-	}
+	if(!object) 		{ throw lemmings.exception.emptyParameter("object"); }
+	if(!behaviourToAdd) { throw lemmings.exception.emptyParameter("behaviourToAdd"); }
 	
-	return xml; 
-}
-
-lemmings.lib.parseJSON = function(string)
-{
-	var json = eval("(" + string + ")");
-	return json; 
-}
-
-lemmings.lib.toJSON = function(object)
-{
-	// TODO : upgrade this function
-	var string = '{';
-	for(var key in object)
-	{
-		string += '"' + key + '": "' + object[key] + '",';
-	}
+	if(typeof(behaviourToAdd) !== "object") { throw lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
 	
-	string = string.substr(0, string.length - 1) + '}';
-	return string;
-}
-
-lemmings.lib.extend = function(object, classToAdd)
-{
-	if(!object) 	{ throw 'Empty parameter : "object"'; }
-	if(!classToAdd)	{ throw 'Empty parameter : "classToAdd"'; }
-	
-	if(typeof(classToAdd) == "string")
-	{
-		classToAdd = eval('(' + classToAdd + ')');
-	}
-	
-	var classPrototype = classToAdd.prototype;
-	if(!classPrototype) { throw 'Class has no prototype'; }
+	var classPrototype = behaviourToAdd.prototype;
+	if(!classPrototype) { return; }
+		
 	for(var property in classPrototype) 
 	{
 		object[property] = classPrototype[property];
 	}
 	
 	object.self = object;
+}
+
+lemmings.lib.removeBehaviour = function(object, behaviourToRemove)
+{
+	if(!object) 		{ throw lemmings.exception.emptyParameter("object"); }
+	if(!behaviourToAdd) { throw lemmings.exception.emptyParameter("behaviourToAdd"); }
+	
+	if(typeof(behaviourToAdd) !== "object") { throw lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
+	
+	var classPrototype = behaviourToAdd.prototype;
+	if(!classPrototype) { return; }
+		
+	for(var property in classPrototype) 
+	{
+		delete object[property];
+	}
 }

@@ -7,8 +7,21 @@ They will be updated as soon as we would have a stable api for the lemmings work
 
 ## To do
 
+### building library
+
+ * clean up master.instatiateWorkers method
+ * fix issues with json (not all browsers are compatible with json messages)
  * test type of message to add a different behaviour in case of plain text messages
+ * add javascript unit tests
+ * simulate worker processing for olders browsers ?
  
+### usability
+ * minify libraries
+ * comment methods
+ * add documentation
+ 
+### presentation
+
  * rewrite and style the demo.htm page
- * rewrite demos properly
+ * clean up demos
  * add another funky demo

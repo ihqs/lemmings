@@ -1,9 +1,12 @@
 lemmings.messages = {}
 lemmings.messages.prototype = {
+	ACTION_MESSAGE:	"Message",
 	ACTION_IMPORT: 	"Import",
-	ACTION_EXTEND: 	"Extend",
 	ACTION_PROCESS: "Process",
-	ACTION_LOG:		"Log"
+	ACTION_LOG:		"Log",
+
+	ACTION_ADD_BEHAVIOUR: 	"AddBehaviour",
+	ACTION_DEL_BEHAVIOUR: 	"RemoveBehaviour",
 }
 
 lemmings.messages.prototype.log = function(message)
@@ -17,6 +20,40 @@ lemmings.messages.prototype.postAction = function(action, object, worker)
 	this.doPostMessage(object, worker);
 }
 
+lemmings.messages.prototype.postData = function(variable, message, worker)
+{
+	object = { 
+		variable : variable,
+		message : message
+	};
+	this.doPostMessage(object, worker);
+}
+
+lemmings.messages.prototype.postActions = function(action, data)
+{
+	if(!this.workers || !this.workers.length || this.workers.length == 0)
+	{
+		return ;
+	}
+	
+	if (!data 
+	|| (typeof(data) != "array" && typeof(data) != "object"))
+	{
+		var single_data = data;
+		data = new Array();
+		
+		for(var i = 0; i < this.workers.length; i++)
+		{
+			data[i] = single_data;
+		}
+	}
+	
+	for(var key in this.workers)
+	{
+		this.postAction(action, data[key], this.workers[key]);
+	}
+}
+
 lemmings.messages.prototype.doPostMessage = function(message, worker)
 {
 	if(worker)  { worker.postMessage(message); }
@@ -26,9 +63,9 @@ lemmings.messages.prototype.doPostMessage = function(message, worker)
 lemmings.messages.prototype.onmessage = function(event)
 {
 	var data = event.data;
-	if(data.message)
+	if(data.message && data.variable)
 	{
-		this[data.message] = data;
+		this[data.variable] = data.message;
 	}
 	
 	if(data.action)
@@ -40,11 +77,6 @@ lemmings.messages.prototype.onmessage = function(event)
 		{
 			this[processed_method](data);
 		}
-	}
-	
-	if(!data.message && !data.action)
-	{
-		this[data] = data;
 	}
 }
 	
