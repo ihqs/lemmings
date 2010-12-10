@@ -12,7 +12,7 @@ pi.config = {
  ********************************************************/
 pi.master = function() 
 {  
-	var url = lemmings.protocol + lemmings.url + '/demos/pi/worker.js?alea=' + Math.random();
+	var url = lemmings.protocol + lemmings.url + '/' + 'demos/pi/worker.js?alea=' + Math.random();
 	
 	var data = new Array();
 	for(var i = 0; i < pi.config.nb_workers; i++) 
@@ -23,7 +23,7 @@ pi.master = function()
 		}; 
 	}
 	
-	this.createWorkers(data.length, url);
+	this.createWorkers(data.length, {uri: url });
 	this.postActionToAll(this.ACTION_PROCESS, data);	
 }
 

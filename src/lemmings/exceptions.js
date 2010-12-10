@@ -2,21 +2,25 @@ lemmings.exception =
 {
 	emptyParameter: function(parameter)
 	{
-		return "[Empty Parameter Exception] You have to specify the '" + parameter + "' parameter";
+		this.name 	 = "Lemmings Empty Parameter Exception";
+		this.message = "You have to specify the '" + parameter + "' parameter";
 	},
 
 	wrongParameter: function(parameter, type, given)
 	{
-		return "[Wrong Parameter Exception] Parameter '" + parameter + "' must be an instance of '" + type + "' - " + typeof(given) + " given";
+		this.name 	 = "Lemmings Wrong Parameter Exception";
+		this.message = "'" + parameter + "' must be an instance of '" + type + "' - " + typeof(given) + " given";
 	},
 	
 	messageFormat: function()
 	{
-		return "[Message Format Exception] Message is not well formatted";
+		this.name 	 = "Lemmings Message Format Exception";
+		this.message = "Message is not well formatted";
 	},
 	
 	tooMuchWorker: function()
 	{
-		return "[Too Much Worker Exception] Impossible to launch lemmings : you can only launch a maximum of 16 lemmings";
+		this.name	 = "Too Much Workers Exception";
+		this.message = "Impossible to launch lemmings : you can only launch a maximum of 16 lemmings";
 	}
 }

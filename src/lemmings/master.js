@@ -24,15 +24,14 @@ lemmings.master.prototype.createWorker = function(options)
 	// sanity checker
 	if(lemmings.launchedLemmings >= 16) 
 	{
-		throw lemmings.exception.tooMuchWorkers();
-		return;
+		throw new lemmings.exception.tooMuchWorkers();
 	}
 	
 	try 
 	{
 		var worker = new lemmings.worker(lemmings.protocol + lemmings.url + '/' + lemmings.path + '/worker.js');
-		if(options.uri) 		{ this.postAction(this.ACTION_IMPORT, { url: url }, worker) }
-		if(options.behaviour)	{ this.postAction(this.ACTION_ADD_BEHAVIOUR, { behaviour: behaviour }, worker) }
+		if(options.uri) 		{ this.postAction(this.ACTION_IMPORT, { url: options.uri }, worker) }
+		if(options.behaviour)	{ this.postAction(this.ACTION_ADD_BEHAVIOUR, { behaviour: options.behaviour }, worker) }
 		
 		var closure = lemmings.lib.closure(this, this.onmessage);
 		worker.onmessage = closure;
@@ -53,11 +52,11 @@ lemmings.master.prototype.createWorker = function(options)
 	}
 }
 
-lemmings.master.prototype.createWorkers = function(nb_workers, uri)
+lemmings.master.prototype.createWorkers = function(nb_workers, options)
 {
 	for(var i = 0; i < nb_workers; i++)
 	{
-		this.createWorker(uri);
+		this.createWorker(options);
 	}
 }
 

@@ -34,10 +34,10 @@ lemmings.lib.enumToArray = function(iterable)
 
 lemmings.lib.addBehaviour = function(object, behaviourToAdd)
 {
-	if(!object) 		{ throw lemmings.exception.emptyParameter("object"); }
-	if(!behaviourToAdd) { throw lemmings.exception.emptyParameter("behaviourToAdd"); }
+	if(!object) 		{ throw new lemmings.exception.emptyParameter("object"); }
+	if(!behaviourToAdd) { throw new lemmings.exception.emptyParameter("behaviourToAdd"); }
 	
-	if(typeof(behaviourToAdd) !== "object") { throw lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
+	if(typeof(behaviourToAdd) !== "object") { throw new lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
 	
 	var classPrototype = behaviourToAdd.prototype;
 	if(!classPrototype) { return; }
@@ -52,10 +52,10 @@ lemmings.lib.addBehaviour = function(object, behaviourToAdd)
 
 lemmings.lib.removeBehaviour = function(object, behaviourToRemove)
 {
-	if(!object) 		{ throw lemmings.exception.emptyParameter("object"); }
-	if(!behaviourToAdd) { throw lemmings.exception.emptyParameter("behaviourToAdd"); }
+	if(!object) 		{ throw new lemmings.exception.emptyParameter("object"); }
+	if(!behaviourToAdd) { throw new lemmings.exception.emptyParameter("behaviourToAdd"); }
 	
-	if(typeof(behaviourToAdd) !== "object") { throw lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
+	if(typeof(behaviourToAdd) !== "object") { throw new lemmings.exception.wrongParameter("behaviourToAdd", "object", behaviourToAdd); }
 	
 	var classPrototype = behaviourToAdd.prototype;
 	if(!classPrototype) { return; }
