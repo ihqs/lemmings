@@ -30,8 +30,7 @@ lemmings.master.prototype.createWorker = function()
 	
 	try 
 	{
-		var worker = new lemmings.worker(lemmings.path + '/worker.js');
-		
+		var worker = new lemmings.worker(lemmings.protocol + lemmings.url + '/' + lemmings.path + '/worker.js');
 		
 		var closure = lemmings.lib.closure(this, this.onmessage);
 		worker.onmessage = closure;
