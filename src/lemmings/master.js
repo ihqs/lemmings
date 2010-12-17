@@ -5,7 +5,8 @@ lemmings.master = function()
 	this.date_end 	= null;
 	this.workers	= new Array();
 	this.date_start = new Date();
-	
+
+	lemmings.init();
 	lemmings.lib.addBehaviour(this, lemmings.messages);
 }
 
@@ -21,17 +22,22 @@ lemmings.master.prototype.setWorkerUri = function(uri)
 
 lemmings.master.prototype.createWorker = function(options)
 {
+	if(lemmings.pending)
+	{
+		lemmings.stash(this, this.createWorker, options);
+		return;
+	}
 	// sanity checker
-	if(lemmings.launchedLemmings >= 16) 
+	if(lemmings.launchedLemmings >= lemmings.lemmingsLimit) 
 	{
 		throw new lemmings.exception.tooMuchWorkers();
 	}
 	
 	try 
 	{
+		options.id = lemmings.launchedLemmings + 1;
 		var worker = new lemmings.worker(lemmings.protocol + lemmings.url + '/' + lemmings.path + '/worker.js');
-		if(options.uri) 		{ this.postAction(this.ACTION_IMPORT, { url: options.uri }, worker) }
-		if(options.behaviour)	{ this.postAction(this.ACTION_ADD_BEHAVIOUR, { behaviour: options.behaviour }, worker) }
+		this.postAction(this.ACTION_INIT, options, worker);
 		
 		var closure = lemmings.lib.closure(this, this.onmessage);
 		worker.onmessage = closure;
@@ -39,7 +45,7 @@ lemmings.master.prototype.createWorker = function(options)
 	
 	catch(e)
 	{
-		this.doLog('[' + e.filename + ':' + e.lineno + '] ' + e.message);
+		this.doLog(e);
 	}
 	
 	finally
@@ -75,6 +81,8 @@ lemmings.master.prototype.onLogMessage = function(data)
 
 lemmings.master.prototype.doLog = function(message)
 {
+	if(message.message) { message = '[' + message.filename + ':' + message.lineno + '] ' + message.message; }
+	
 	var log_container = document.getElementById('log');
 	if(lemmings.log && log_container != null) 
 	{

@@ -1,30 +1,79 @@
-lemmings = {}	
 
-importScripts('exceptions.js');
-importScripts('lib.js');
-importScripts('messages.js');
-lemmings.lib.addBehaviour(this, lemmings.messages);
+if(typeof(lemmings) === "undefined") 		{ lemmings = {} } 
+if(typeof(lemmings.worker) === "undefined") { lemmings.worker = function() { ; } }
 
-this.is_worker = true;
-
-this.onerror = function(e)
+lemmings.worker.prototype.onerror = function(e)
 {
-	this.postMessage({ action: "Log", message: '[' + e.filename + ':' + e.lineno + '] ' + e.message });
+	this.doLog(e);
 }
 
-this.onImportMessage = function(data)
+lemmings.worker.prototype.doLog = function(message)
 {
-	importScripts(data.url);
+	this.postMessage({ action: "Log", message: message });
 }
 
-this.onAddBehaviourMessage = function(data)
+lemmings.worker.prototype.onInitMessage = function(data)
 {
-	if(data.url) 		{ importScripts(data.url); }
-	if(data.behaviour) 	{ lemmings.lib.addBehaviour(this, data.behaviour); }
+	this.worker_id = data.id;
+	this.onAddBehaviourMessage(data);
 }
 
-this.onRemoveBehaviourMessage = function(data)
+lemmings.worker.prototype.onImportMessage = function(data)
 {
-	if(data.url) 		{ importScripts(data.url); }
-	if(data.behaviour) 	{ lemmings.lib.removeBehaviour(this, data.behaviour); }
+	this.importScripts(data.url);
+}
+
+lemmings.worker.prototype.onAddBehaviourMessage = function(data)
+{
+	if(data.url) 		{ this.importScripts(data.url); }
+	if(data.behaviour) 
+	{ 
+		self = this;
+		var extend = function() { lemmings.lib.addBehaviour(self, data.behaviour) };
+		if(lemmings.pending)
+		{
+			lemmings.stash(extend);
+		}
+		else
+		{
+			extend();
+		}
+	}
+}
+
+lemmings.worker.prototype.onRemoveBehaviourMessage = function(data)
+{
+	if(data.url) 		{ this.importScripts(data.url); }
+	if(data.behaviour) 
+	{ 
+		self = this;
+		var extend = function() { lemmings.lib.removeBehaviour(self, data.behaviour) };
+		if(lemmings.pending)
+		{
+			lemmings.stash(extend);
+		}
+		else
+		{
+			extend();
+		}
+	}
+}
+
+if(!lemmings.compatibility_mode)
+{
+	try
+	{
+		this.importScripts('exceptions.js', 'lib.js', 'messages.js');
+		lemmings.lib.addBehaviour(this, lemmings.messages);
+		lemmings.lib.addBehaviour(this, lemmings.worker);
+	}
+	
+	catch(e)
+	{
+		this.postMessage({ action: "Log", message: e.message });
+	}
+}
+else
+{
+	lemmings.unstash();	
 }

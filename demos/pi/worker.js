@@ -1,16 +1,19 @@
+if(typeof(pi) === "undefined") { pi = {} }
 
-this.onProcessMessage = function(data) 
+/********************************************************
+ * Pi lemmings workers
+ ********************************************************/
+pi.worker = function() { ; }
+pi.worker.prototype.onProcessMessage = function(data) 
 {
-	var n 	= 1 * data.start_value;
-	var end	= 2 * data.end_value;
+	var n 	= data.start_value;
+	var end	= data.end_value;
 	
 	total = 0;
-	while (true) 
+	for(var i = n; i < end; i++) 
 	{
-	  n += 1;
-	  if(n >= end) { break; }
-	  
-	  total += 1 / Math.pow(n, 2);
+		if(i == 0) { continue; }
+		total += 1 / Math.pow(i, 2);
 	}
 	
 	this.postAction('Result', {total: total});

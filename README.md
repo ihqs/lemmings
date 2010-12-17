@@ -9,11 +9,8 @@ They will be updated as soon as we would have a stable api for the lemmings work
 
 ### building library
 
- * add identifier to workers they can send in each upcoming message in order to identify them in the master routines
- * fix issues with json (not all browsers are compatible with json messages)
- * test type of message to add a different behaviour in case of plain text messages
  * add javascript unit tests
- * simulate worker processing for olders browsers ?
+ * finish non complient worker compatibility mode and manage [post|on]message with events
  
 ### usability
  * minify libraries

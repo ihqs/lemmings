@@ -4,9 +4,10 @@ lemmings.messages.prototype = {
 	ACTION_IMPORT: 	"Import",
 	ACTION_PROCESS: "Process",
 	ACTION_LOG:		"Log",
+	ACTION_INIT:	"Init",
 
 	ACTION_ADD_BEHAVIOUR: 	"AddBehaviour",
-	ACTION_DEL_BEHAVIOUR: 	"RemoveBehaviour",
+	ACTION_DEL_BEHAVIOUR: 	"RemoveBehaviour"
 }
 
 lemmings.messages.prototype.log = function(message)
@@ -16,8 +17,8 @@ lemmings.messages.prototype.log = function(message)
 
 lemmings.messages.prototype.postAction = function(action, object, worker)
 {
-	if(typeof(object) !== "object") { object = {} }
-	
+	if(typeof(object) !== "object") { object = {}; }
+
 	object.action = action;
 	this.doPostMessage(object, worker);
 }
@@ -83,8 +84,19 @@ lemmings.messages.prototype.postActionToAll = function(action, data)
 
 lemmings.messages.prototype.doPostMessage = function(message, worker)
 {
-	if(worker)  { worker.postMessage(message); }
-	else		{ postMessage(message); }
+	if(this.worker_id) { message.worker_id = this.worker_id; }
+	
+	if(lemmings.lib.isWorkerCompatible())
+	{
+		if(worker)  { worker.postMessage(message); }
+		else		{ this.postMessage(message); }
+	}
+	
+	else
+	{
+		if(worker) 	{ worker.onmessage({data: message}); }
+		else		{ this.onOutgoingMessage({data: message}); }
+	}
 }
 
 lemmings.messages.prototype.onmessage = function(event)
@@ -94,16 +106,36 @@ lemmings.messages.prototype.onmessage = function(event)
 	{
 		this[data.variable] = data.message;
 	}
-	
+
 	if(data.action)
 	{
 		var method = data.action;
-		
+
 		var processed_method = 'on' + method + 'Message';
 		if(typeof(this[processed_method]) == "function")
 		{
-			this[processed_method](data);
+			try
+			{
+				this[processed_method](data);
+			}
+			
+			catch(e) 
+			{
+				this.doLog(e);
+			}
+		}
+		else
+		{
+			console.log(processed_method);
+			console.log(typeof(this[processed_method]));
 		}
 	}
+}
+
+lemmings.messages.prototype.onOutgoingMessage = function(event)
+{
+	str = [];
+	for(k in event) { str.push(k + ' : ' + event[k])}
+	console.log(str);
 }
 	

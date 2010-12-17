@@ -4,7 +4,7 @@
 pi = {}	
 pi.config = {
 	nb_workers: 4,
-	items_per_workers: 10000
+	items_per_workers: 100000
 }
 
 /********************************************************
@@ -23,7 +23,7 @@ pi.master = function()
 		}; 
 	}
 	
-	this.createWorkers(data.length, {uri: url });
+	this.createWorkers(data.length, { url: url, behaviour: "pi.worker" });
 	this.postActionToAll(this.ACTION_PROCESS, data);	
 }
 
@@ -41,8 +41,6 @@ pi.master.prototype.onResultMessage = function(data)
 
 	var now = new Date();
 	document.getElementById('elapsed').textContent = now.getTime() - this.date_start.getTime();
-
-	this.doLog('worker closed');
 }
 
 pi.master.prototype.outputResult = function(message)
@@ -50,25 +48,6 @@ pi.master.prototype.outputResult = function(message)
 	var item_output = document.createElement('output');
 	item_output.textContent = message;
 	document.getElementById('lemming_outputs').appendChild(item_output);	
-}
-
-/********************************************************
- * Pi lemmings workers
- ********************************************************/
-pi.worker = function() { ; }
-pi.worker.prototype.onProcessMessage = function(data) 
-{
-	var n 	= 1 * data.start_value;
-	var end	= 2 * data.end_value;
-	
-	total = 0;
-	for(var i = n; i < end; i++) 
-	{
-	  total += 1 / Math.pow(n, 2);
-	}
-	
-	this.postAction('Result', {total: total});
-	this.close();
 }
 
 new pi.master();
