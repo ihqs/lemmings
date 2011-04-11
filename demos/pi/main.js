@@ -3,7 +3,7 @@
  ********************************************************/
 pi = {}	
 pi.config = {
-	nb_workers: 4,
+	nb_workers: 16,
 	items_per_workers: 100000
 }
 
